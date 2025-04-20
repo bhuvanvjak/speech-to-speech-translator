@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoiceBridge - Real-Time Speech Translator</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <meta name="theme-color" content="#007bff">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-section">
+        <h1>🌍 Vocal Link</h1>
+        <p class="tagline">Breaking language barriers live</p>
+      </div>
+      <div class="header-controls">
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
+          <i class="fas fa-moon"></i>
+        </button>
+        <button id="keyboardShortcuts" class="keyboard-shortcuts" aria-label="Show keyboard shortcuts">
+          <i class="fas fa-keyboard"></i>
+        </button>
+      </div>
+    </header>
+
+    <div id="offlineIndicator" class="offline-indicator">
+      <i class="fas fa-wifi-slash"></i>
+      <span>You are offline. Some features may not work.</span>
+    </div>
+
+    <div id="error" class="error"></div>
+
+    <main class="translator-grid">
+      <div class="language-controls">
+        <div class="language-section">
+          <label for="inputLang">I'm speaking in:</label>
+          <div class="select-wrapper">
+            <select id="inputLang">
+              <option value="auto">Auto Detect</option>
+              <option value="en-US">English</option>
+              <option value="hi-IN">Hindi</option>
+              <option value="es-ES">Spanish</option>
+              <option value="zh-CN">Chinese</option>
+              <option value="ru-RU">Russian</option>
+              <option value="ja-JP">Japanese</option>
+              <option value="ko-KR">Korean</option>
+              <option value="de-DE">German</option>
+              <option value="fr-FR">French</option>
+              <option value="ta-IN">Tamil</option>
+              <option value="te-IN">Telugu</option>
+              <option value="kn-IN">Kannada</option>
+              <option value="ml-IN">Malayalam</option>
+              <option value="bn-IN">Bengali</option>
+              <option value="mr-IN">Marathi</option>
+              <option value="gu-IN">Gujarati</option>
+              <option value="pa-IN">Punjabi</option>
+              <option value="ur-IN">Urdu</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="langSwap" class="language-swap" aria-label="Swap languages">
+          <i class="fas fa-exchange-alt"></i>
+        </button>
+
+        <div class="language-section">
+          <label for="outputLang">Translate to:</label>
+          <div class="select-wrapper">
+            <select id="outputLang">
+              <option value="en">English</option>
+              <option value="hi">Hindi</option>
+              <option value="es">Spanish</option>
+              <option value="zh-cn">Chinese</option>
+              <option value="ru">Russian</option>
+              <option value="ja">Japanese</option>
+              <option value="ko">Korean</option>
+              <option value="de">German</option>
+              <option value="fr">French</option>
+              <option value="ta">Tamil</option>
+              <option value="te">Telugu</option>
+              <option value="kn">Kannada</option>
+              <option value="ml">Malayalam</option>
+              <option value="bn">Bengali</option>
+              <option value="mr">Marathi</option>
+              <option value="gu">Gujarati</option>
+              <option value="pa">Punjabi</option>
+              <option value="ur">Urdu</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-panel">
+        <button id="toggleButton" class="primary-button">
+          <i class="fas fa-microphone"></i>
+          <span>Start Translation</span>
+        </button>
+        
+        <div class="control-buttons">
+          <button id="voiceSettingsButton" class="secondary-button" title="Voice Settings">
+            <i class="fas fa-sliders"></i>
+          </button>
+          <button id="saveTranscriptButton" class="secondary-button" title="Save Transcript">
+            <i class="fas fa-save"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="text-areas">
+        <div class="text-area-section">
+          <div class="text-area-header">
+            <label for="inputText">Recognized Speech:</label>
+            <div class="text-actions">
+              <button id="copyInput" class="icon-button" aria-label="Copy input text">
+                <i class="fas fa-copy"></i>
+              </button>
+              <button id="clearInput" class="icon-button" aria-label="Clear input text">
+                <i class="fas fa-eraser"></i>
+              </button>
+            </div>
+          </div>
+          <textarea id="inputText" readonly></textarea>
+          <div id="waveform-input" class="waveform"></div>
+        </div>
+
+        <div class="text-area-section">
+          <div class="text-area-header">
+            <label for="translatedText">Translated Text:</label>
+            <div class="text-actions">
+              <button id="copyTranslated" class="icon-button" aria-label="Copy translated text">
+                <i class="fas fa-copy"></i>
+              </button>
+              <button id="playTranslated" class="icon-button" aria-label="Play translation">
+                <i class="fas fa-play"></i>
+              </button>
+              <button id="downloadAudio" class="icon-button" aria-label="Download audio" disabled>
+                <i class="fas fa-download"></i>
+              </button>
+              <button id="clearTranslated" class="icon-button" aria-label="Clear translated text">
+                <i class="fas fa-eraser"></i>
+              </button>
+            </div>
+          </div>
+          <textarea id="translatedText" readonly></textarea>
+          <div id="waveform-output" class="waveform"></div>
+        </div>
+      </div>
+
+      <div id="historySection" class="history-section">
+        <div class="history-header">
+          <h2>Translation History</h2>
+          <button id="clearHistory" class="clear-history">Clear History</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </div>
+    </main>
+
+    <footer>
+      <p>Built with ❤️ using Google Cloud TTS and Web Speech API</p>
+      <div class="keyboard-shortcuts-info">
+        Press <kbd>Space</kbd> to start/stop translation | <kbd>Ctrl</kbd> + <kbd>S</kbd> to save transcript
+      </div>
+    </footer>
+  </div>
+
+  <div id="micAnimation" class="mic-animation">
+    <i class="fas fa-microphone"></i>
+  </div>
+
+  <div id="settingsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Voice Settings</h2>
+        <button id="closeSettings" class="close-modal">×</button>
+      </div>
+      
+      <div class="settings-group">
+        <h3>Text-to-Speech Settings</h3>
+        
+        <div class="settings-control">
+          <label for="pitchSlider">Voice Pitch</label>
+          <div class="slider-container">
+            <input type="range" id="pitchSlider" min="0.5" max="2.0" step="0.1" value="1.0">
+            <span id="pitchValue" class="slider-value">1.0</span>
+          </div>
+        </div>
+        
+        <div class="settings-control">
+          <label for="speedSlider">Speech Rate</label>
+          <div class="slider-container">
+            <input type="range" id="speedSlider" min="0.5" max="2.0" step="0.1" value="1.0">
+            <span id="speedValue" class="slider-value">1.0</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button id="resetSettings" class="secondary-button">Reset to Default</button>
+        <button id="saveSettings" class="primary-button">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="shortcutsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Keyboard Shortcuts</h2>
+        <button class="close-modal">×</button>
+      </div>
+      <div class="shortcuts-list">
+        <div class="shortcut-item">
+          <kbd>Space</kbd>
+          <span>Start/Stop Translation</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>Ctrl</kbd> + <kbd>S</kbd>
+          <span>Save Transcript</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>Ctrl</kbd> + <kbd>D</kbd>
+          <span>Toggle Dark Mode</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>Ctrl</kbd> + <kbd>C</kbd>
+          <span>Copy Translated Text</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>Ctrl</kbd> + <kbd>P</kbd>
+          <span>Play Translation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
